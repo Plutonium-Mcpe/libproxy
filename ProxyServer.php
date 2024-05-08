@@ -284,19 +284,19 @@ class ProxyServer
      */
     private function sendDataPacket(int $socketId, BedrockPacket $packet): void
     {
-        $packetSerializer = PacketSerializer::encoder($protocolId = $this->getProtocolId($socketId));
+        $packetSerializer = PacketSerializer::encoder();
         $packet->encode($packetSerializer);
 
         $stream = new BinaryStream();
         PacketBatch::encodeRaw($stream, [$packetSerializer->getBuffer()]);
-        $payload = ($protocolId >= ProtocolInfo::PROTOCOL_1_20_60 ? chr(CompressionAlgorithm::ZLIB) : '') . ZlibCompressor::getInstance()->compress($stream->getBuffer());
+        $payload = chr(CompressionAlgorithm::ZLIB) . ZlibCompressor::getInstance()->compress($stream->getBuffer());
 
         $this->sendPayload($socketId, $payload);
     }
 
     private function decodePacket(int $socketId, BedrockPacket $packet, string $buffer): void
     {
-        $stream = PacketSerializer::decoder($this->protocolId[$socketId] ?? ProtocolInfo::CURRENT_PROTOCOL, $buffer, 0);
+        $stream = PacketSerializer::decoder($buffer, 0);
         try {
             $packet->decode($stream);
         } catch (PacketDecodeException $e) {
