@@ -1,5 +1,5 @@
 {
-    "name": "nethergamesmc/libproxy",
+    "name": "plutonium/libproxy",
     "description": "An TCP proxy library for PocketMine-MP",
     "license": "proprietary",
     "type": "project",
